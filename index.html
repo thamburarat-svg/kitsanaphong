@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เว็บคำนวณเกรด (ปรับปรุง)</title>
+    <title>เว็บคำนวณเกรด (สีสันสวยงาม)</title>
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +14,7 @@
         /* Custom styles */
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
         }
         .table-responsive {
             overflow-x: auto;
@@ -63,12 +63,21 @@
         <div class="mb-6">
             <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
                 <h2 class="text-xl font-semibold text-gray-700">ผลการคำนวณเกรด</h2>
-                <button id="calculateGradesBtn" class="bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 w-full sm:w-auto flex items-center justify-center space-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
-                    <span>คำนวณเกรดทั้งหมด</span>
-                </button>
+                <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                    <button id="calculateGradesBtn" class="bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 w-full sm:w-auto flex items-center justify-center space-x-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span>คำนวณเกรดทั้งหมด</span>
+                    </button>
+                    <!-- New Export CSV Button -->
+                    <button id="exportCsvBtn" class="bg-gradient-to-r from-purple-500 to-purple-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 w-full sm:w-auto flex items-center justify-center space-x-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                        </svg>
+                        <span>เอ็กพอร์ต CSV</span>
+                    </button>
+                </div>
             </div>
             
             <div class="table-responsive">
@@ -99,6 +108,7 @@
         const addStudentForm = document.getElementById('addStudentForm');
         const studentTableBody = document.getElementById('studentTableBody');
         const calculateGradesBtn = document.getElementById('calculateGradesBtn');
+        const exportCsvBtn = document.getElementById('exportCsvBtn'); 
         const workWeightInput = document.getElementById('workWeight');
         const examWeightInput = document.getElementById('examWeight');
         const messageBox = document.getElementById('messageBox');
@@ -192,19 +202,21 @@
 
                 // Create table row
                 const row = document.createElement('tr');
-                row.className = 'border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200';
+                row.className = 'border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200 odd:bg-gray-50';
                 row.innerHTML = `
                     <td class="py-3 px-6 text-left whitespace-nowrap">${index + 1}</td>
                     <td class="py-3 px-6 text-left font-medium text-gray-800">${student.name}</td>
                     <td class="py-3 px-6 text-center">${student.workScore}</td>
                     <td class="py-3 px-6 text-center">${student.examScore}</td>
                     <td class="py-3 px-6 text-center font-bold text-gray-900">${totalScore.toFixed(2)}</td>
-                    <td class="py-3 px-6 text-center text-lg font-extrabold 
-                        ${grade === 'A' ? 'text-green-600' :
-                          grade === 'B' ? 'text-blue-600' :
-                          grade === 'C' ? 'text-yellow-600' :
-                          grade === 'D' ? 'text-orange-600' : 'text-red-600'}">
-                        ${grade}
+                    <td class="py-3 px-6 text-center">
+                        <span class="inline-block px-3 py-1 rounded-full text-sm font-semibold 
+                        ${grade === 'A' ? 'bg-green-100 text-green-800' :
+                          grade === 'B' ? 'bg-blue-100 text-blue-800' :
+                          grade === 'C' ? 'bg-yellow-100 text-yellow-800' :
+                          grade === 'D' ? 'bg-orange-100 text-orange-800' : 'bg-red-100 text-red-800'}">
+                            ${grade}
+                        </span>
                     </td>
                     <td class="py-3 px-6 text-right">
                         <button onclick="deleteStudent(${index})" class="bg-red-500 text-white p-2 rounded-lg shadow-sm hover:bg-red-600 transition duration-300 transform hover:scale-105">
@@ -217,6 +229,40 @@
                 studentTableBody.appendChild(row);
             });
             saveStudents(); // Save to localStorage after rendering
+        }
+
+        // Function to export table data to CSV file
+        function exportToCsv() {
+            const workWeight = parseFloat(workWeightInput.value) / 100;
+            const examWeight = parseFloat(examWeightInput.value) / 100;
+
+            if ((workWeight + examWeight).toFixed(2) !== '1.00') {
+                showMessage("ไม่สามารถเอ็กพอร์ตได้: น้ำหนักคะแนนรวมต้องเป็น 100%");
+                return;
+            }
+
+            const headers = ['ลำดับ', 'ชื่อ', 'คะแนนเก็บ', 'คะแนนสอบ', 'คะแนนรวม', 'เกรด'];
+            const rows = students.map((student, index) => {
+                const totalScore = (student.workScore * workWeight) + (student.examScore * examWeight);
+                const grade = calculateGrade(totalScore);
+                return [index + 1, student.name, student.workScore, student.examScore, totalScore.toFixed(2), grade];
+            });
+
+            let csvContent = headers.join(',') + '\n';
+            rows.forEach(row => {
+                csvContent += row.join(',') + '\n';
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "student_grades.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showMessage("ไฟล์ CSV ถูกดาวน์โหลดเรียบร้อยแล้ว!");
         }
 
         // Function to delete a student (global scope for onclick)
@@ -241,6 +287,9 @@
 
         // Recalculate grades on button click
         calculateGradesBtn.addEventListener('click', renderTable);
+        
+        // Export to CSV on button click
+        exportCsvBtn.addEventListener('click', exportToCsv);
 
         // Recalculate grades when weights change
         workWeightInput.addEventListener('change', renderTable);
