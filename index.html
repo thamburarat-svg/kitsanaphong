@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เว็บคำนวณเกรด (สีสันสวยงาม)</title>
+    <title>เว็บคำนวณเกรด (สรุปผล)</title>
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -57,6 +57,39 @@
                     <span>เพิ่มนักเรียน</span>
                 </button>
             </form>
+        </div>
+
+        <!-- Summary Section -->
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">สรุปผลการประเมิน</h2>
+            <div class="bg-gray-50 p-4 rounded-xl shadow-inner grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-center">
+                <!-- Average Score -->
+                <div class="p-4 rounded-lg bg-indigo-100 text-indigo-800 font-bold">
+                    <div class="text-xs uppercase tracking-wide">คะแนนเฉลี่ย</div>
+                    <div id="averageScore" class="text-2xl mt-1">N/A</div>
+                </div>
+                <!-- Grade Count -->
+                <div class="p-4 rounded-lg bg-green-100 text-green-800 font-bold">
+                    <div class="text-xs uppercase tracking-wide">เกรด A</div>
+                    <div id="gradeA" class="text-2xl mt-1">0</div>
+                </div>
+                <div class="p-4 rounded-lg bg-blue-100 text-blue-800 font-bold">
+                    <div class="text-xs uppercase tracking-wide">เกรด B</div>
+                    <div id="gradeB" class="text-2xl mt-1">0</div>
+                </div>
+                <div class="p-4 rounded-lg bg-yellow-100 text-yellow-800 font-bold">
+                    <div class="text-xs uppercase tracking-wide">เกรด C</div>
+                    <div id="gradeC" class="text-2xl mt-1">0</div>
+                </div>
+                <div class="p-4 rounded-lg bg-orange-100 text-orange-800 font-bold">
+                    <div class="text-xs uppercase tracking-wide">เกรด D</div>
+                    <div id="gradeD" class="text-2xl mt-1">0</div>
+                </div>
+                <div class="p-4 rounded-lg bg-red-100 text-red-800 font-bold">
+                    <div class="text-xs uppercase tracking-wide">เกรด F</div>
+                    <div id="gradeF" class="text-2xl mt-1">0</div>
+                </div>
+            </div>
         </div>
 
         <!-- Result Table and Control Buttons -->
@@ -113,6 +146,14 @@
         const examWeightInput = document.getElementById('examWeight');
         const messageBox = document.getElementById('messageBox');
         const messageText = messageBox.querySelector('span');
+        
+        // Summary elements
+        const averageScoreEl = document.getElementById('averageScore');
+        const gradeAEl = document.getElementById('gradeA');
+        const gradeBEl = document.getElementById('gradeB');
+        const gradeCEl = document.getElementById('gradeC');
+        const gradeDEl = document.getElementById('gradeD');
+        const gradeFEl = document.getElementById('gradeF');
 
         // 2. Data State
         let students = [];
@@ -181,6 +222,44 @@
             return 'F';
         }
 
+        // Update summary section
+        function updateSummary() {
+            if (students.length === 0) {
+                averageScoreEl.textContent = 'N/A';
+                gradeAEl.textContent = '0';
+                gradeBEl.textContent = '0';
+                gradeCEl.textContent = '0';
+                gradeDEl.textContent = '0';
+                gradeFEl.textContent = '0';
+                return;
+            }
+
+            const workWeight = parseFloat(workWeightInput.value) / 100;
+            const examWeight = parseFloat(examWeightInput.value) / 100;
+
+            if ((workWeight + examWeight).toFixed(2) !== '1.00') {
+                return;
+            }
+
+            let totalScoreSum = 0;
+            const gradeCounts = { 'A': 0, 'B': 0, 'C': 0, 'D': 0, 'F': 0 };
+
+            students.forEach(student => {
+                const totalScore = (student.workScore * workWeight) + (student.examScore * examWeight);
+                totalScoreSum += totalScore;
+                const grade = calculateGrade(totalScore);
+                gradeCounts[grade]++;
+            });
+
+            const average = totalScoreSum / students.length;
+            averageScoreEl.textContent = average.toFixed(2);
+            gradeAEl.textContent = gradeCounts['A'];
+            gradeBEl.textContent = gradeCounts['B'];
+            gradeCEl.textContent = gradeCounts['C'];
+            gradeDEl.textContent = gradeCounts['D'];
+            gradeFEl.textContent = gradeCounts['F'];
+        }
+
         // Render the student table
         function renderTable() {
             studentTableBody.innerHTML = ''; // Clear table
@@ -229,6 +308,7 @@
                 studentTableBody.appendChild(row);
             });
             saveStudents(); // Save to localStorage after rendering
+            updateSummary(); // Update summary after rendering table
         }
 
         // Function to export table data to CSV file
