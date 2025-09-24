@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เว็บคำนวณเกรดพร้อมกราฟ</title>
+    <title>เว็บคำนวณเกรดพร้อมกราฟ (แก้ไขคะแนนได้)</title>
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -112,6 +112,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
                 <h2 class="text-xl font-semibold text-gray-700">ผลการคำนวณเกรด</h2>
                 <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                    <!-- The "Calculate Grades" button is no longer strictly necessary since scores update automatically, but we keep it for user convenience. -->
                     <button id="calculateGradesBtn" class="bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 w-full sm:w-auto flex items-center justify-center space-x-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
@@ -384,6 +385,20 @@
             });
         }
 
+        // Handle score updates from input fields
+        function updateScore(index, type, value) {
+            if (value >= 0 && value <= 100) {
+                if (type === 'work') {
+                    students[index].workScore = parseFloat(value);
+                } else if (type === 'exam') {
+                    students[index].examScore = parseFloat(value);
+                }
+                renderTable();
+            } else {
+                showMessage("คะแนนต้องอยู่ระหว่าง 0 ถึง 100!");
+            }
+        }
+
         // Render the student table
         function renderTable() {
             studentTableBody.innerHTML = ''; // Clear table
@@ -409,8 +424,12 @@
                 row.innerHTML = `
                     <td class="py-3 px-6 text-left whitespace-nowrap">${index + 1}</td>
                     <td class="py-3 px-6 text-left font-medium text-gray-800">${student.name}</td>
-                    <td class="py-3 px-6 text-center">${student.workScore}</td>
-                    <td class="py-3 px-6 text-center">${student.examScore}</td>
+                    <td class="py-3 px-6 text-center">
+                        <input type="number" value="${student.workScore}" min="0" max="100" class="w-full text-center bg-transparent border-none focus:outline-none" oninput="updateScore(${index}, 'work', this.value)">
+                    </td>
+                    <td class="py-3 px-6 text-center">
+                        <input type="number" value="${student.examScore}" min="0" max="100" class="w-full text-center bg-transparent border-none focus:outline-none" oninput="updateScore(${index}, 'exam', this.value)">
+                    </td>
                     <td class="py-3 px-6 text-center font-bold text-gray-900">${totalScore.toFixed(2)}</td>
                     <td class="py-3 px-6 text-center">
                         <span class="inline-block px-3 py-1 rounded-full text-sm font-semibold 
@@ -474,6 +493,9 @@
             students.splice(index, 1);
             renderTable();
         };
+        
+        // Expose updateScore to the global scope so it can be called from oninput
+        window.updateScore = updateScore;
 
         // 4. Event Listeners
 
