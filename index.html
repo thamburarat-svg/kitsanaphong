@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เว็บคำนวณเกรด (สรุปผล)</title>
+    <title>เว็บคำนวณเกรดพร้อมกราฟ</title>
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Custom styles */
         body {
@@ -32,31 +34,17 @@
             <span class="block"></span>
         </div>
 
-        <!-- Weight and Input Form Section -->
+        <!-- Chart Section -->
         <div class="mb-6 bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200">
-            <h2 class="text-xl font-semibold text-gray-700 mb-4">กำหนดน้ำหนักคะแนนและเพิ่มนักเรียน</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4 text-center">ภาพรวมเกรดในห้องเรียน</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label for="workWeight" class="block text-gray-700 font-medium mb-1">น้ำหนักคะแนนเก็บ (%)</label>
-                    <input type="number" id="workWeight" value="60" min="0" max="100" class="w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3 border text-lg">
+                    <canvas id="gradeCountChart"></canvas>
                 </div>
                 <div>
-                    <label for="examWeight" class="block text-gray-700 font-medium mb-1">น้ำหนักคะแนนสอบ (%)</label>
-                    <input type="number" id="examWeight" value="40" min="0" max="100" class="w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3 border text-lg">
+                    <canvas id="gradeAverageChart"></canvas>
                 </div>
             </div>
-            
-            <form id="addStudentForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <input type="text" id="studentName" placeholder="ชื่อนักเรียน" required class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg">
-                <input type="number" id="workScore" placeholder="คะแนนเก็บ (เต็ม 100)" min="0" max="100" required class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg">
-                <input type="number" id="examScore" placeholder="คะแนนสอบ (เต็ม 100)" min="0" max="100" required class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg">
-                <button type="submit" class="col-span-1 md:col-span-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
-                    </svg>
-                    <span>เพิ่มนักเรียน</span>
-                </button>
-            </form>
         </div>
 
         <!-- Summary Section -->
@@ -90,6 +78,33 @@
                     <div id="gradeF" class="text-2xl mt-1">0</div>
                 </div>
             </div>
+        </div>
+        
+        <!-- Weight and Input Form Section -->
+        <div class="mb-6 bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">กำหนดน้ำหนักคะแนนและเพิ่มนักเรียน</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="workWeight" class="block text-gray-700 font-medium mb-1">น้ำหนักคะแนนเก็บ (%)</label>
+                    <input type="number" id="workWeight" value="60" min="0" max="100" class="w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3 border text-lg">
+                </div>
+                <div>
+                    <label for="examWeight" class="block text-gray-700 font-medium mb-1">น้ำหนักคะแนนสอบ (%)</label>
+                    <input type="number" id="examWeight" value="40" min="0" max="100" class="w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3 border text-lg">
+                </div>
+            </div>
+            
+            <form id="addStudentForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <input type="text" id="studentName" placeholder="ชื่อนักเรียน" required class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg">
+                <input type="number" id="workScore" placeholder="คะแนนเก็บ (เต็ม 100)" min="0" max="100" required class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg">
+                <input type="number" id="examScore" placeholder="คะแนนสอบ (เต็ม 100)" min="0" max="100" required class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg">
+                <button type="submit" class="col-span-1 md:col-span-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                    </svg>
+                    <span>เพิ่มนักเรียน</span>
+                </button>
+            </form>
         </div>
 
         <!-- Result Table and Control Buttons -->
@@ -154,6 +169,10 @@
         const gradeCEl = document.getElementById('gradeC');
         const gradeDEl = document.getElementById('gradeD');
         const gradeFEl = document.getElementById('gradeF');
+
+        // Chart elements
+        let gradeCountChart;
+        let gradeAverageChart;
 
         // 2. Data State
         let students = [];
@@ -236,19 +255,20 @@
 
             const workWeight = parseFloat(workWeightInput.value) / 100;
             const examWeight = parseFloat(examWeightInput.value) / 100;
-
             if ((workWeight + examWeight).toFixed(2) !== '1.00') {
                 return;
             }
 
             let totalScoreSum = 0;
             const gradeCounts = { 'A': 0, 'B': 0, 'C': 0, 'D': 0, 'F': 0 };
+            const gradeScores = { 'A': [], 'B': [], 'C': [], 'D': [], 'F': [] };
 
             students.forEach(student => {
                 const totalScore = (student.workScore * workWeight) + (student.examScore * examWeight);
                 totalScoreSum += totalScore;
                 const grade = calculateGrade(totalScore);
                 gradeCounts[grade]++;
+                gradeScores[grade].push(totalScore);
             });
 
             const average = totalScoreSum / students.length;
@@ -258,6 +278,110 @@
             gradeCEl.textContent = gradeCounts['C'];
             gradeDEl.textContent = gradeCounts['D'];
             gradeFEl.textContent = gradeCounts['F'];
+            
+            // Prepare data for chart
+            const gradeLabels = ['A', 'B', 'C', 'D', 'F'];
+            const countData = gradeLabels.map(grade => gradeCounts[grade]);
+            const averageData = gradeLabels.map(grade => {
+                const scores = gradeScores[grade];
+                return scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2) : 0;
+            });
+
+            renderCharts(gradeLabels, countData, averageData);
+        }
+
+        // Render the charts
+        function renderCharts(labels, countData, averageData) {
+            const gradeColors = {
+                'A': 'rgba(75, 192, 192, 0.6)',
+                'B': 'rgba(54, 162, 235, 0.6)',
+                'C': 'rgba(255, 206, 86, 0.6)',
+                'D': 'rgba(255, 159, 64, 0.6)',
+                'F': 'rgba(255, 99, 132, 0.6)'
+            };
+
+            const gradeBorderColors = {
+                'A': 'rgba(75, 192, 192, 1)',
+                'B': 'rgba(54, 162, 235, 1)',
+                'C': 'rgba(255, 206, 86, 1)',
+                'D': 'rgba(255, 159, 64, 1)',
+                'F': 'rgba(255, 99, 132, 1)'
+            };
+
+            const backgroundColors = labels.map(label => gradeColors[label]);
+            const borderColors = labels.map(label => gradeBorderColors[label]);
+            
+            const commonOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true },
+                    x: { ticks: { font: { family: 'Inter' } } }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        titleFont: { family: 'Inter' },
+                        bodyFont: { family: 'Inter' }
+                    }
+                }
+            };
+            
+            // Chart 1: Grade Count
+            if (gradeCountChart) gradeCountChart.destroy();
+            const ctx1 = document.getElementById('gradeCountChart').getContext('2d');
+            gradeCountChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'จำนวนนักเรียน',
+                        data: countData,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        ...commonOptions.plugins,
+                        title: {
+                            display: true,
+                            text: 'จำนวนนักเรียนแต่ละเกรด',
+                            font: { size: 16, family: 'Inter', weight: 'bold' }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Grade Average
+            if (gradeAverageChart) gradeAverageChart.destroy();
+            const ctx2 = document.getElementById('gradeAverageChart').getContext('2d');
+            gradeAverageChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'คะแนนเฉลี่ย',
+                        data: averageData,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        ...commonOptions.plugins,
+                        title: {
+                            display: true,
+                            text: 'คะแนนเฉลี่ยแต่ละเกรด',
+                            font: { size: 16, family: 'Inter', weight: 'bold' }
+                        }
+                    }
+                }
+            });
         }
 
         // Render the student table
@@ -308,7 +432,7 @@
                 studentTableBody.appendChild(row);
             });
             saveStudents(); // Save to localStorage after rendering
-            updateSummary(); // Update summary after rendering table
+            updateSummary(); // Update summary and charts after rendering table
         }
 
         // Function to export table data to CSV file
