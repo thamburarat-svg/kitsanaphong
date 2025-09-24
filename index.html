@@ -109,31 +109,35 @@
 
         <!-- Result Table and Control Buttons -->
         <div class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">ผลการคำนวณเกรด</h2>
             <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
-                <h2 class="text-xl font-semibold text-gray-700">ผลการคำนวณเกรด</h2>
-                <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-                    <input type="file" id="csvFileInput" accept=".csv" class="hidden">
-                    <button id="importCsvBtn" class="bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-lg shadow-md hover:bg-gray-300 transition duration-300 transform hover:scale-105 w-full sm:w-auto flex items-center justify-center space-x-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zM16 16h-3v3h-2v-3H8v-2h3v-3h2v3h3v2z"/>
-                        </svg>
-                        <span>นำเข้า CSV</span>
-                    </button>
-                    <!-- The "Calculate Grades" button is no longer strictly necessary since scores update automatically, but we keep it for user convenience. -->
-                    <button id="calculateGradesBtn" class="bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 w-full sm:w-auto flex items-center justify-center space-x-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                        </svg>
-                        <span>คำนวณเกรดทั้งหมด</span>
-                    </button>
-                    <!-- New Export CSV Button -->
-                    <button id="exportCsvBtn" class="bg-gradient-to-r from-purple-500 to-purple-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 w-full sm:w-auto flex items-center justify-center space-x-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-                        </svg>
-                        <span>เอ็กพอร์ต CSV</span>
-                    </button>
-                </div>
+                <input type="file" id="csvFileInput" accept=".csv" class="hidden">
+                <div class="flex items-center gap-2">
+                     <button id="importCsvBtn" class="bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-lg shadow-md hover:bg-gray-300 transition duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                             <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zM16 16h-3v3h-2v-3H8v-2h3v-3h2v3h3v2z"/>
+                         </svg>
+                         <span>นำเข้า CSV</span>
+                     </button>
+                     <select id="importModeSelect" class="p-3 border border-gray-300 rounded-lg bg-white shadow-sm focus:ring-blue-500 focus:border-blue-500 text-lg">
+                         <option value="replace">แทนที่ข้อมูลเดิม</option>
+                         <option value="append">เพิ่มข้อมูลต่อท้าย</option>
+                     </select>
+                 </div>
+                <!-- The "Calculate Grades" button is no longer strictly necessary since scores update automatically, but we keep it for user convenience. -->
+                <button id="calculateGradesBtn" class="bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 w-full sm:w-auto flex items-center justify-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <span>คำนวณเกรดทั้งหมด</span>
+                </button>
+                <!-- New Export CSV Button -->
+                <button id="exportCsvBtn" class="bg-gradient-to-r from-purple-500 to-purple-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 w-full sm:w-auto flex items-center justify-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                    </svg>
+                    <span>เอ็กพอร์ต CSV</span>
+                </button>
             </div>
             
             <div class="table-responsive">
@@ -167,6 +171,7 @@
         const exportCsvBtn = document.getElementById('exportCsvBtn'); 
         const importCsvBtn = document.getElementById('importCsvBtn');
         const csvFileInput = document.getElementById('csvFileInput');
+        const importModeSelect = document.getElementById('importModeSelect');
         const workWeightInput = document.getElementById('workWeight');
         const examWeightInput = document.getElementById('examWeight');
         const messageBox = document.getElementById('messageBox');
@@ -556,9 +561,15 @@
                     const csvContent = event.target.result;
                     const newStudents = parseCSV(csvContent);
                     if (newStudents.length > 0) {
-                        students = newStudents;
+                        const importMode = importModeSelect.value;
+                        if (importMode === 'replace') {
+                            students = newStudents;
+                            showMessage("นำเข้าข้อมูลใหม่ทั้งหมดเรียบร้อยแล้ว!");
+                        } else if (importMode === 'append') {
+                            students.push(...newStudents);
+                            showMessage("เพิ่มข้อมูลใหม่ต่อท้ายเรียบร้อยแล้ว!");
+                        }
                         renderTable();
-                        showMessage("นำเข้าข้อมูลจากไฟล์ CSV สำเร็จแล้ว!");
                     }
                 };
                 reader.readAsText(file);
